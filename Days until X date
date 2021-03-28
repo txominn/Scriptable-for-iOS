@@ -1,0 +1,84 @@
+// CREDITS
+// Created by u/txominn
+
+// READ THE INSTRUCTIONS BELOW
+// You need to both edit the code and add parameters in order to personalise the widget.
+
+// To add parameters, add the widget to your home, long press it and tap 'edit widget'
+// Your parameter must have the following format: countdown-end-date|countdown-title
+// The parameter should be typed as: December 24 2025|🎄Holidays
+// All parameters are required
+// Separated parameters with "|"
+// Parameters allow different settings for multiple widget instances.
+
+var widgetInputRAW = args.widgetParameter;
+var ErrorMsg = "Please long press the widget and set two parameters. Eg: December 24 2025|🎄Holidays"
+if (args.widgetParameter == null)		
+	{
+	throw new Error(ErrorMsg);				
+	}	
+if (args.widgetParameter.toString() == "")		
+	{
+	throw new Error(ErrorMsg);				
+	}
+var widgetInput = widgetInputRAW.toString();
+var inputArr = widgetInput.split("|");
+var goal = inputArr[0];
+var text = inputArr[1];
+	
+class GoalWidget
+{
+
+run()	
+{
+let widget = this.deployWidget();
+if (!config.runsInWidget)	
+	{
+     widget.presentSmall();
+     }
+Script.setWidget(widget);
+Script.complete();
+}
+
+deployWidget()
+{
+let list = new ListWidget();
+list.setPadding(12, 12, 12, 12);
+let titleTxt = list.addText(text);
+titleTxt.font = Font.mediumSystemFont(13);
+titleTxt.centerAlignText()
+list.addText("");
+let daysLeft = this.calculateDaysLeft();
+let daysLeftTxt = list.addText(daysLeft.toString());
+daysLeftTxt.centerAlignText()
+daysLeftTxt.textColor = this.decideDisplayColor(daysLeft);
+daysLeftTxt.font = Font.boldSystemFont(24);
+list.addText("");
+let BottomLine = list.addText("💪🏻💪🏻💪🏻💪🏻");
+BottomLine.centerAlignText()
+BottomLine.font = Font.boldSystemFont(24);
+return list
+}
+
+calculateDaysLeft()
+{
+const total = -Date.parse(goal) + Date.parse(new Date());
+var days = Math.floor( total/(1000*60*60*24) ); 
+return days;
+}
+
+decideDisplayColor(daysLeft)
+{
+if (daysLeft >= -90)
+	{
+     return Color.yellow();
+     }
+if (daysLeft >= -30)
+	{
+     return Color.red();
+     }
+return Color.green();
+}
+}
+
+new GoalWidget().run();
